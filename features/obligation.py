@@ -2,7 +2,7 @@ import os
 from tinkoff.invest import *
 from pprint import pprint
 
-from basic import cast_money, get_accs
+from basic import cast_money, get_accs, cn
 
 TOKEN = os.environ["INVEST_TOKEN"]
 
@@ -41,7 +41,7 @@ def get_obligation(account_id):
                 print(f"\033[93m{bond.figi}\033[0m")
                 print(f"Количество лотов: {lots_qty}")
                 print(f"Текущая цена: {price:.2f} {bond.current_price.currency}" )
-                print(f"Доходность по цене: {lot_yield:.2f} ({pct_yield:.2f}%)")
-                print(f"Доходность по купону: {nkd_yield:.2f} ({nkd_pct_yield:.2f}%)")
+                print(f"Доходность по цене: {cn(lot_yield)} ({cn(pct_yield)}%)")
+                print(f"Доходность по купону: {cn(nkd_yield)} ({cn(nkd_pct_yield)}%)")
                 #print('\n')        
     return 

@@ -5,12 +5,29 @@ from tinkoff.invest import *
 
 import sys
 import os
-#current_dir = os.path.dirname(os.path.abspath(__file__))
-#sys.path.append(current_dir)
+from typing import Union
 
 from pprint import pprint
 
 TOKEN = os.environ["INVEST_TOKEN"]
+
+def cn(num: Union[float, int]) -> str:
+    """
+    Colorize a number, positive -> green, negative -> red, 0 -> no color.
+    Args:
+        num: The number to colorize.
+    Returns:
+        The colorized number as a string.
+    """
+    if isinstance(num, (float, int)):
+        if num > 0:
+            return f"\033[92m{num:.2f}\033[0m"  # зеленый цвет
+        elif num < 0:
+            return f"\033[91m{num:.2f}\033[0m"  # красный цвет
+        else:
+            return str(num)
+    else:
+        raise TypeError("Argument must be either int or float")
 
 def get_accs():
     with Client(TOKEN) as client:
