@@ -41,17 +41,16 @@ def get_obligation(account_id):
         bond_list = [position for position in positions if position.instrument_type == 'bond']
 
         if not bond_list:
-            print("Нет облигаций на счёте {account_id}.")
+            print(f"Нет облигаций на счёте {account_id}.")
         else:
             for bond in bond_list:           
 
-                lot_yield = cast_money(bond.expected_yield)
+                lot_yield = cast_money(bond.expected_yield)     #доходность всей позиции
                 lots_qty = int(cast_money(bond.quantity_lots))
 
                 price = cast_money(bond.current_price)
 
-                pos_yield = lot_yield * lots_qty
-                pct_yield = (pos_yield / price)*100
+                pct_yield = (lot_yield / (price*lots_qty))*100
 
                 nkd_yield = cast_money(bond.current_nkd)*lots_qty
                 nkd_pct_yield = (cast_money(bond.current_nkd) / price)*100
