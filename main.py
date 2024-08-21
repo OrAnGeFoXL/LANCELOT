@@ -24,6 +24,16 @@ def test():
             pprint(i, indent=1)
 
 
+def test_menu():
+    options = ["Спарклайн", "Тест подключения"]
+    terminal_menu = TerminalMenu(options)
+
+    match terminal_menu.show():
+        case 0:
+            basic.draw_sparkline([0, 1, 2, 3, 4, 5, 6, 7, 8, -8, -7, -6, -5, -4, -3, -2, -1, 0])
+        case 1:
+            test()
+   
 def main():
     options = ["Облигации", "Проверка", "Список счётов (acount_id)"]
     terminal_menu = TerminalMenu(options)
@@ -33,11 +43,11 @@ def main():
         case 0:
             obligation.show_obligation()
         case 1:
-            test()
+            test_menu()
         case 2:
             pprint(basic.get_accs())
 
-    print(f"You have selected {options[menu_entry_index]}!")
+
 
 
 
