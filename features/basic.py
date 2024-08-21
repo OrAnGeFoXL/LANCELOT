@@ -1,6 +1,6 @@
 
 import pandas as pd
-
+import math
 from tinkoff.invest import *
 
 import sys
@@ -28,6 +28,35 @@ def cn(num: Union[float, int]) -> str:
             return str(num)
     else:
         raise TypeError("Argument must be either int or float")
+
+def draw_sparkline(values=[0, 1, 2, 3, 4, 5, 6, 7, 8, -8, -7, -6, -5, -4, -3, -2, -1, 0]):
+    """
+    Выводит sparkline из значений в List.
+    """
+    symbols = ' ▁▂▃▄▅▆▇█'
+
+    max_value = max(values)
+    scale = len(symbols) / max_value
+
+    sparkline = ''
+    for value in values:
+        index = round(abs(value) * scale)
+
+        if index >= len(symbols):
+            index = len(symbols) - 1
+        
+        symbol = symbols[index]
+
+        if value > 0:
+            sparkline += f"\033[92m{symbol}\033[0m"
+        elif value < 0:
+            sparkline += f"\033[91m{symbol}\033[0m"
+        else:
+            sparkline += symbol
+        
+    print(sparkline)
+    return sparkline
+
 
 def get_accs():
     with Client(TOKEN) as client:
