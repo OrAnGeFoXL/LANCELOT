@@ -29,7 +29,7 @@ def cn(num: Union[float, int]) -> str:
     else:
         raise TypeError("Argument must be either int or float")
 
-def draw_sparkline(values=[0, 1, 2, 3, 4, 5, 6, 7, 8, -8, -7, -6, -5, -4, -3, -2, -1, 0]):
+def draw_sparkline(values):
     """
     Выводит sparkline из значений в List.
     """
@@ -58,6 +58,38 @@ def draw_sparkline(values=[0, 1, 2, 3, 4, 5, 6, 7, 8, -8, -7, -6, -5, -4, -3, -2
     return sparkline
 
 
+def bar_chart(num, limit, label=True):
+
+    blocks = ' ▏▎▍▌▋▊▉█'
+    if label:
+        label=' '+str(num)
+    else:
+        label = ''
+        
+    term_width = os.get_terminal_size()[0]-len(label)
+
+    bigger = max(num, limit)
+    scale = term_width/bigger
+
+    bar_ln = scale*num
+
+    body_ln = math.modf(bar_ln)[1] #целая часть
+    tail_ln = math.modf(bar_ln)[0] #остаток
+
+    tail_scale = len(blocks)/10
+    tail_index = int(10*round(tail_ln,1)*tail_scale)
+
+    if tail_index >= len(blocks):
+        tail_index = len(blocks)-1
+
+    body = int(body_ln)*blocks[-1]
+    tail = blocks[tail_index]
+    bar = body + tail
+    print(f"{bar}{label}")
+
+    return bar, num
+
+	
 def get_accs():
     with Client(TOKEN) as client:
         r = client.users.get_accounts()
