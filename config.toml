@@ -1,0 +1,39 @@
+#Основные настройки
+
+# Мониторинг цен
+[watcher]
+timezone = 'Russia/Moscow'
+
+[watcher.time]
+start = 08:00
+stop = 22:00
+
+[watcher.days]
+weekdays = [1,1,1,1,1,0,0]
+firstday = 'Monday'
+
+[limits]
+daily_pct = 1     
+dailt_abs = 10000
+
+weekly_pct = 3
+weekly_abs = 30000
+
+month_pct = 10
+month_abs = 100000
+
+[notification]
+telegramm = True
+
+[interface]
+[interface.sparkline]
+show = True
+timeframe = '1D'
+lookback = 10
+weekend = False
+
+[interface.charts]
+labels = True
+
+
+
