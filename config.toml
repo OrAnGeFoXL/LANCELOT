@@ -5,8 +5,8 @@
 timezone = 'Russia/Moscow'
 
 [watcher.time]
-start = 08:00
-stop = 22:00
+start = '08:00'
+stop = '22:00'
 
 [watcher.days]
 weekdays = [1,1,1,1,1,0,0]
@@ -23,17 +23,17 @@ month_pct = 10
 month_abs = 100000
 
 [notification]
-telegramm = True
+telegramm = true
 
 [interface]
 [interface.sparkline]
-show = True
+show = true
 timeframe = '1D'
 lookback = 10
-weekend = False
+weekend = false
 
 [interface.charts]
-labels = True
+labels = true
 
 
 
