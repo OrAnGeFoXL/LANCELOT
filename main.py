@@ -9,7 +9,7 @@ if os.path.exists(dotenv_path):
     load_dotenv(dotenv_path)
 
 from pprint import pprint
-from features import basic, obligation
+from features import basic, obligation, portfolio
 from basic import *
 
 
@@ -37,7 +37,7 @@ def test_menu():
             test()
    
 def main():
-    options = ["Облигации", "Проверка", "Список счётов (acount_id)"]
+    options = ["Облигации", "Проверка", "Список счётов (acount_id)", "Портфель"]
     terminal_menu = TerminalMenu(options)
     menu_entry_index = terminal_menu.show()
 
@@ -48,6 +48,8 @@ def main():
             test_menu()
         case 2:
             pprint(basic.get_accs())
+        case 3:
+            portfolio.get_pf(ACCS[0])
 
 
 
