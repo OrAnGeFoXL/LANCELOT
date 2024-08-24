@@ -1,5 +1,6 @@
 
 import pandas as pd
+from pandas import DataFrame
 import math
 from tinkoff.invest import *
 
@@ -171,7 +172,7 @@ def figi_ticker(FIGI):
  
         df = df[df['figi'] == FIGI]
         if df.empty:
-            print(f"Нет тикера {FIGI}")
+            print(f"Нет тикера для {FIGI}")
             return ()
  
         ticker=df['ticker'].iloc[0]
