@@ -62,12 +62,18 @@ def bar_chart(num, limit, label=True):
 
     blocks = ' ▏▎▍▌▋▊▉█'
     if label:
-        label=' '+str(num)
+        label=' '+str(round(num,2))
     else:
         label = ''
-        
-    term_width = os.get_terminal_size()[0]-len(label)
+    
+    term_width = os.get_terminal_size()[0]-len(label)-1 #FIXME: число для поправки 
 
+    if num < 0:
+        color = '\033[91m'
+    else:
+        color = '\033[92m'
+
+    num  = abs(num)
     bigger = max(num, limit)
     scale = term_width/bigger
 
@@ -85,9 +91,11 @@ def bar_chart(num, limit, label=True):
     body = int(body_ln)*blocks[-1]
     tail = blocks[tail_index]
     bar = body + tail
-    print(f"{bar}{label}")
+    print(f"{color}{bar}{label}\033[0m")
+    if num > limit:
+        print(f"\033[91mЛимит превышен на {round((num-limit),2)}%!!!\033[0m")
 
-    return bar, num
+    return 
 
 	
 def get_accs():
