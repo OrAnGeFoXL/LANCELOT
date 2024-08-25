@@ -158,23 +158,12 @@ def figi_ticker(FIGI):
         instruments: InstrumentsService = cl.instruments
         market_data: MarketDataService = cl.market_data
  
-        l = []
+        figi_dict = {}
         for method in ['shares', 'bonds', 'etfs' , 'currencies', 'futures']:
             for item in getattr(instruments, method)().instruments:
-                l.append({
-                    'ticker': item.ticker,
-                    'figi': item.figi,
-                    'type': method,
-                    'name': item.name,
-                })
- 
-        df = DataFrame(l)
- 
-        df = df[df['figi'] == FIGI]
-        if df.empty:
-            print(f"Нет тикера для {FIGI}")
-            return ()
- 
-        ticker=df['ticker'].iloc[0]
-    return (ticker)
+                if item.figi in FIGI:
+                    figi_dict.update({item.figi: item.ticker})
+                    
+        return figi_dict
+
 

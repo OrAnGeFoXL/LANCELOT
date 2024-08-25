@@ -36,14 +36,18 @@ def get_pf(account_id):
         }.items() if (v.units != 0 or v.nano != 0)], sep='\n')
 
         positions=item.positions
+
+        figi_list = [position.figi for position in positions]
+        figi_dict = figi_ticker(figi_list)
         
         for i in positions: 
             if i.blocked == False:
                 size = cast_money(i.quantity)*cast_money(i.average_position_price_fifo)
                 pct_chng = 100*cast_money(i.expected_yield)/size
+                print(cast_money(i.average_position_price_fifo))
 
-                print(f"{figi_ticker(i.figi)}({i.instrument_type}) - {cn(cast_money(i.quantity))} шт. - {cn(cast_money(i.expected_yield))} {cn(cast_money(i.average_position_price))}")
+                print(f"{figi_dict.get(i.figi)}-{i.figi}({i.instrument_type}) - {cn(cast_money(i.quantity))} шт. - {cn(cast_money(i.expected_yield))} {(cast_money(i.average_position_price_fifo))}")
                 print(f"Доходность по цене: {cn(cast_money(i.expected_yield))} ({cn(pct_chng)}%)")
                 bar_chart(pct_chng, cnf['limits']['weekly_pct'])
             else:
-                print(f"Актив заблокирован {figi_ticker(i.figi)}({i.instrument_type})")
+                print(f"Актив заблокирован {figi_dict.get(i.figi)}-{i.figi}({i.instrument_type})")
