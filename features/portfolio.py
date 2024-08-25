@@ -50,4 +50,6 @@ def get_pf(account_id):
                 print(f"Доходность по цене: {cn(cast_money(i.expected_yield))} ({cn(pct_chng)}%)")
                 bar_chart(pct_chng, cnf['limits']['weekly_pct'])
             else:
-                print(f"Актив заблокирован {figi_dict.get(i.figi)}-{i.figi}({i.instrument_type})")
+                if cnf['main']['show_blocked']:
+                    print(f"Актив заблокирован {figi_dict.get(i.figi)}-{i.figi}({i.instrument_type})")
+

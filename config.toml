@@ -1,4 +1,6 @@
 #Основные настройки
+[main]
+show_blocked = true
 
 # Мониторинг цен
 [watcher]
