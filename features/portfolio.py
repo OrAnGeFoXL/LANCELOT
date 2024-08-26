@@ -22,6 +22,22 @@ def get_pf(account_id):
     with Client(TOKEN) as cl:
         operations: OperationsService = cl.operations
         item = operations.get_portfolio(account_id=account_id)
+
+        orders: StopOrdersService = cl.stop_orders
+        stop_orders = orders.get_stop_orders(account_id=account_id).stop_orders
+
+        sl_dict = {}
+        tp_dict = {}
+        tst_dict = {}
+
+        for i in stop_orders:
+
+            if i.order_type == StopOrderType.STOP_ORDER_TYPE_STOP_LOSS:
+                sl_dict.update({i.figi: i.lots_requested})
+
+            elif i.order_type == StopOrderType.STOP_ORDER_TYPE_TAKE_PROFIT:
+                tp_dict.update({i.figi: i.lots_requested})
+              
         
         #Общая информация по портфелю
         print(*[f"Общая сумма {k}: {cn(cast_money(v))} {v.currency}" for k, v in {
@@ -44,9 +60,18 @@ def get_pf(account_id):
             if i.blocked == False:
                 size = cast_money(i.quantity)*cast_money(i.average_position_price_fifo)
                 pct_chng = 100*cast_money(i.expected_yield)/size
+
+                orders_l = ''
+                if i.figi in sl_dict:
+                    orders_l += f"\033[41mSL\033[0m"
+                if i.figi in tp_dict:
+                    orders_l += f"\033[42mTP\033[0m"
+                if i.figi in tst_dict:
+                    orders_l += f"\033[41mTST\033[0m"
+
                 print(cast_money(i.average_position_price_fifo))
 
-                print(f"{figi_dict.get(i.figi)}-{i.figi}({i.instrument_type}) - {cn(cast_money(i.quantity))} шт. - {cn(cast_money(i.expected_yield))} {(cast_money(i.average_position_price_fifo))}")
+                print(f"{orders_l}{figi_dict.get(i.figi)}-{i.figi}({i.instrument_type}) - {cn(cast_money(i.quantity))} шт. - {cn(cast_money(i.expected_yield))} {(cast_money(i.average_position_price_fifo))}")
                 print(f"Доходность по цене: {cn(cast_money(i.expected_yield))} ({cn(pct_chng)}%)")
                 bar_chart(pct_chng, cnf['limits']['weekly_pct'])
             else:
