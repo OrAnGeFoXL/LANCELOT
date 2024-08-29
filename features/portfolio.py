@@ -104,18 +104,18 @@ def get_pf(account_id):
 
                 orders_l = ''
                 if i.figi in sl_dict:
-                    orders_l += f"\033[41mSL\033[0m"
+                    orders_l += f"\033[41mSL\033[0m "
                 if i.figi in tp_dict:
-                    orders_l += f"\033[42mTP\033[0m"
+                    orders_l += f"\033[42mTP\033[0m "
                 if i.figi in tst_dict:
-                    orders_l += f"\033[41mTST\033[0m"
+                    orders_l += f"\033[41mTST\033[0m "
 
-                print(cast_money(i.average_position_price_fifo))
-
-                print(f"{orders_l}{figi_dict.get(i.figi)}-{i.figi}({i.instrument_type}) - {cn(cast_money(i.quantity))} шт. - {cn(cast_money(i.expected_yield))} {(cast_money(i.average_position_price_fifo))}")
+                print(f"----\033[93m{figi_dict.get(i.figi)}-{i.figi}\033[0m-------")
+                print(f"{orders_l}(\033[94m{i.instrument_type}\033[0m) - {cn(cast_money(i.quantity))} шт. - {(cast_money(i.average_position_price_fifo))}")
                 print(f"Доходность по цене: {cn(cast_money(i.expected_yield))} ({cn(pct_chng)}%)")
                 bar_chart(pct_chng, cnf['limits']['weekly_pct'])
             else:
                 if cnf['main']['show_blocked']:
+                    print("---------------")
                     print(f"Актив заблокирован {figi_dict.get(i.figi)}-{i.figi}({i.instrument_type})")
 
