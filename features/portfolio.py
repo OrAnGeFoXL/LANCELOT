@@ -19,6 +19,27 @@ with open('config.toml') as f:
 
 TOKEN = os.environ["INVEST_TOKEN"]
 
+class CandlesSerial:
+    def __init__(self, candles):
+        self.open = [cast_money(i.open) for i in candles]
+        self.high = [cast_money(i.high) for i in candles]
+        self.low = [cast_money(i.low) for i in candles]
+        self.close = [cast_money(i.close) for i in candles]
+        self.volume = [i.volume for i in candles]
+
+def get_history(figi: str, days: int = 10) -> List[HistoricCandle]:
+
+    with Client(TOKEN) as cl:
+        market_data: MarketDataService = cl.market_data
+        history = market_data.get_candles(
+            instrument_id=figi,
+            from_=now() - timedelta(days=days),
+            to=now(),
+            interval=CandleInterval.CANDLE_INTERVAL_DAY
+            ).candles
+            
+        return history
+
 def sortino_ratio(returns: List[Union[float, int]], risk_free_rate: float, target_return: float) -> float:
 
     negative_returns = [r for r in returns if r < target_return]
