@@ -5,7 +5,7 @@ import numpy as np
 from typing import List, Union
 from pprint import pprint
 
-from basic import cast_money, get_accs, cn, figi_ticker, bar_chart
+from basic import cast_money, get_accs, cn, figi_ticker, bar_chart, sparkline
 
 from simple_term_menu import TerminalMenu
 
@@ -19,26 +19,7 @@ with open('config.toml') as f:
 
 TOKEN = os.environ["INVEST_TOKEN"]
 
-class CandlesSerial:
-    def __init__(self, candles):
-        self.open = [cast_money(i.open) for i in candles]
-        self.high = [cast_money(i.high) for i in candles]
-        self.low = [cast_money(i.low) for i in candles]
-        self.close = [cast_money(i.close) for i in candles]
-        self.volume = [i.volume for i in candles]
 
-def get_history(figi: str, days: int = 10) -> List[HistoricCandle]:
-
-    with Client(TOKEN) as cl:
-        market_data: MarketDataService = cl.market_data
-        history = market_data.get_candles(
-            instrument_id=figi,
-            from_=now() - timedelta(days=days),
-            to=now(),
-            interval=CandleInterval.CANDLE_INTERVAL_DAY
-            ).candles
-            
-        return history
 
 def sortino_ratio(returns: List[Union[float, int]], risk_free_rate: float, target_return: float) -> float:
 
@@ -133,6 +114,7 @@ def get_pf(account_id):
 
                 print(f"----\033[93m{figi_dict.get(i.figi)}-{i.figi}\033[0m-------")
                 print(f"{orders_l}(\033[94m{i.instrument_type}\033[0m) - {cn(cast_money(i.quantity))} шт. - {(cast_money(i.average_position_price_fifo))}")
+                print(f"{sparkline(i.figi)}")
                 print(f"Доходность по цене: {cn(cast_money(i.expected_yield))} ({cn(pct_chng)}%)")
                 bar_chart(pct_chng, cnf['limits']['weekly_pct'])
             else:

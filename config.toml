@@ -30,6 +30,7 @@ telegramm = true
 [interface]
 [interface.sparkline]
 show = true
+show_labels = true
 timeframe = '1D'
 lookback = 10
 weekend = false

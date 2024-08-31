@@ -3,14 +3,42 @@ import pandas as pd
 from pandas import DataFrame
 import math
 from tinkoff.invest import *
+from tinkoff.invest.utils import now
 
 import sys
 import os
-from typing import Union
+from typing import List, Union
 
 from pprint import pprint
 
+from datetime import timedelta 
+import time
+
 TOKEN = os.environ["INVEST_TOKEN"]
+
+import toml
+with open('config.toml') as f:
+    cnf = toml.load(f)
+class CandlesSerial:
+    def __init__(self, candles):
+        self.open = [cast_money(i.open) for i in candles]
+        self.high = [cast_money(i.high) for i in candles]
+        self.low = [cast_money(i.low) for i in candles]
+        self.close = [cast_money(i.close) for i in candles]
+        self.volume = [i.volume for i in candles]
+
+def get_history(figi: str, days: int = 10) -> List[HistoricCandle]:
+
+    with Client(TOKEN) as cl:
+        market_data: MarketDataService = cl.market_data
+        history = market_data.get_candles(
+            instrument_id=figi,
+            from_=now() - timedelta(days=days),
+            to=now(),
+            interval=CandleInterval.CANDLE_INTERVAL_DAY
+            ).candles
+            
+        return history
 
 def cn(num: Union[float, int]) -> str:
     """
@@ -34,9 +62,13 @@ def draw_sparkline(values):
     """
     Выводит sparkline из значений в List.
     """
+    if not values:
+        return None  
+
+    abs_values = [abs(v) for v in values]
     symbols = ' ▁▂▃▄▅▆▇█'
 
-    max_value = max(values)
+    max_value = max(abs_values)
     scale = len(symbols) / max_value
 
     sparkline = ''
@@ -55,9 +87,30 @@ def draw_sparkline(values):
         else:
             sparkline += symbol
         
-    print(sparkline)
-    return sparkline
+    return sparkline, min(values), max(values)
 
+def calculate_percent_change(lst: List[Union[float, int]]) -> List[float]:
+
+    result = []
+    for i in range(1, len(lst)):
+        change = (lst[i] - lst[i-1]) / lst[i-1] * 100
+        result.append(change)
+    return result
+
+def sparkline(figi: str, days: int = 10) -> str:
+
+    history = get_history(figi, days)
+    candles = CandlesSerial(history)
+    pct_chg = calculate_percent_change(candles.close)
+    sparkline = draw_sparkline(pct_chg)
+
+    if not sparkline:
+        return "NoData"
+
+    if cnf["interface"]["sparkline"]["show_labels"]:
+        label =f"{sparkline[1]:.2f} {sparkline[2]:.2f}"
+
+    return sparkline[0]+label
 
 def bar_chart(num, limit, label=True):
 
