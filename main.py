@@ -25,7 +25,7 @@ def test():
 
 
 def test_menu():
-    options = ["Спарклайн", "Тест подключения"]
+    options = ["Спарклайн", "Тест figi"]
     terminal_menu = TerminalMenu(options)
 
     match terminal_menu.show():
@@ -34,7 +34,7 @@ def test_menu():
             for i in range(1, 50):
                 basic.bar_chart(i, 100)
         case 1:
-            test()
+            basic.figi_ticker(["BBG000B9XRY4","BBG001M2SC01"])
    
 def main():
     options = ["Облигации", "Проверка", "Список счётов (acount_id)", "Портфель"]

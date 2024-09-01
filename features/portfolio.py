@@ -5,7 +5,7 @@ import numpy as np
 from typing import List, Union
 from pprint import pprint
 
-from basic import cast_money, get_accs, cn, figi_ticker, bar_chart, sparkline
+from basic import cast_money, get_accs, cn, figi_ticker, bar_chart, sparkline, CandlesSerial, get_history, calculate_percent_change
 
 from simple_term_menu import TerminalMenu
 
@@ -15,50 +15,12 @@ import time
 import toml
 with open('config.toml') as f:
     cnf = toml.load(f)
-#print(data)
-
-TOKEN = os.environ["INVEST_TOKEN"]
 
 
 
-def sortino_ratio(returns: List[Union[float, int]], risk_free_rate: float, target_return: float) -> float:
 
-    negative_returns = [r for r in returns if r < target_return]
-    std_dev_negative_returns = np.std(negative_returns)
-    sortino_ratio = (np.mean(returns) - risk_free_rate) / std_dev_negative_returns
-    return sortino_ratio
 
-def treynor_ratio(returns: List[Union[float, int]], risk_free_rate: float, beta: float) -> float:
-    
-    excess_returns = np.mean(returns) - risk_free_rate
-    treynor_ratio = excess_returns / beta
-    return treynor_ratio
 
-def beta_coefficient(returns_portfolio: List[Union[float, int]], returns_market: List[Union[float, int]]) -> float:
-
-    covariance_portfolio_market = np.cov(returns_portfolio, returns_market)[0, 1]
-    variance_market = np.var(returns_market)
-    beta_coefficient = covariance_portfolio_market / variance_market
-    return beta_coefficient
-
-def alpha_coefficient(returns_portfolio: List[Union[float, int]], returns_market: List[Union[float, int]], risk_free_rate: float, beta: float) -> float:
-
-    mean_returns_portfolio = np.mean(returns_portfolio)
-    mean_returns_market = np.mean(returns_market)
-    alpha_coefficient = mean_returns_portfolio - (risk_free_rate + beta * (mean_returns_market - risk_free_rate))
-    return alpha_coefficient
-
-def sharpe_ratio(returns: List[Union[float, int]], risk_free_rate: float) -> float:
-
-    mean_returns = np.mean(returns)
-    std_returns = np.std(returns)
-    sharpe_ratio = (mean_returns - risk_free_rate) / std_returns
-    return sharpe_ratio
-
-def sterling_ratio(max_drawdown: float, average_annual_return: float, risk_free_rate: float) -> float:
-
-    sterling_ratio = (average_annual_return - risk_free_rate) / max_drawdown
-    return sterling_ratio
 
 def get_pf(account_id):
     """Запрашивает информацию об активах на счету"""
@@ -112,13 +74,27 @@ def get_pf(account_id):
                 if i.figi in tst_dict:
                     orders_l += f"\033[41mTST\033[0m "
 
+                #Рассчет коэффициентов
+
+                history = get_history(i.figi, 100)
+                cndl = CandlesSerial(history)
+                returns = calculate_percent_change(cndl.close)
+                
+                risk_free_rate = 0.04
+                target_return = 0.1
+
+                sortino = sortino_ratio(returns, risk_free_rate, target_return)
+
                 print(f"----\033[93m{figi_dict.get(i.figi)}-{i.figi}\033[0m-------")
                 print(f"{orders_l}(\033[94m{i.instrument_type}\033[0m) - {cn(cast_money(i.quantity))} шт. - {(cast_money(i.average_position_price_fifo))}")
                 print(f"{sparkline(i.figi)}")
+                print(f"Сортино:{sortino}")
                 print(f"Доходность по цене: {cn(cast_money(i.expected_yield))} ({cn(pct_chng)}%)")
                 bar_chart(pct_chng, cnf['limits']['weekly_pct'])
             else:
                 if cnf['main']['show_blocked']:
                     print("---------------")
                     print(f"Актив заблокирован {figi_dict.get(i.figi)}-{i.figi}({i.instrument_type})")
+
+
 
