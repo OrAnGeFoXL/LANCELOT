@@ -3,7 +3,8 @@ from tinkoff.invest import *
 from tinkoff.invest.utils import now
 from pprint import pprint
 
-from basic import cast_money, get_accs, cn
+from libs.interface import *
+from libs.broker import *
 
 from simple_term_menu import TerminalMenu
 
@@ -63,13 +64,7 @@ def get_obligation(account_id):
                 #print('\n')        
     return 
 
-def instrumemt_info(figi)->Instrument:
-    with Client(TOKEN) as cl:
-        instruments: InstrumentsService = cl.instruments
-        market_data: MarketDataService = cl.market_data
-        item = instruments.get_instrument_by(id_type=InstrumentIdType.INSTRUMENT_ID_TYPE_FIGI, id=figi).instrument
-        #pprint(item, indent=4)
-    return item
+
 
 def daily_bond_yield(account_id):
 

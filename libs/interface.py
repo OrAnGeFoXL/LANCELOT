@@ -1,7 +1,14 @@
+import os
+import math
+from typing import List, Union
+
+from libs.broker import *
+from features.basic import calculate_percent_change
 
 
-
-
+import toml
+with open('config.toml') as f:
+    cnf = toml.load(f)
 
 def cn(num: Union[float, int]) -> str:
     """

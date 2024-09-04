@@ -42,6 +42,14 @@ def cast_money(v):
     """
     return v.units + v.nano / 1e9 # nano - 9 нулей
 
+def instrumemt_info(figi)->Instrument:
+    with Client(TOKEN) as cl:
+        instruments: InstrumentsService = cl.instruments
+        market_data: MarketDataService = cl.market_data
+        item = instruments.get_instrument_by(id_type=InstrumentIdType.INSTRUMENT_ID_TYPE_FIGI, id=figi).instrument
+        #pprint(item, indent=4)
+    return item
+
 def get_portfolio_positions(account_id):
     """Запрашивает информацию о позиции в портфеле (get_positions)"""
     with Client(TOKEN) as cl:

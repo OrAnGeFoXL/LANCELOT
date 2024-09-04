@@ -11,10 +11,10 @@ if os.path.exists(dotenv_path):
 from pprint import pprint
 from features import basic, obligation, portfolio
 from basic import *
-
+from libs.broker import *
 
 TOKEN = os.environ["INVEST_TOKEN"]
-ACCS = basic.get_accs()
+ACCS = get_accs()
 
 
 def test():
@@ -47,7 +47,7 @@ def main():
         case 1:
             test_menu()
         case 2:
-            pprint(basic.get_accs())
+            pprint(get_accs())
         case 3:
             portfolio.get_pf(ACCS[0])
 
